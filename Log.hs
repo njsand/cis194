@@ -9,7 +9,7 @@ data MessageType = Info
                  | Error Int
   deriving (Show, Eq)
 
--- type TimeStamp = Int
+type TimeStamp = Int
 
 data LogMessage = LogMessage MessageType Int String
                 | Unknown String

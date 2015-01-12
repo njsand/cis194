@@ -18,7 +18,7 @@ toDigitsRev = reverse . toDigits
 -- Double every 2nd element of a list.
 doubleEveryOther :: [Integer] -> [Integer]
 doubleEveryOther [] = []
-doubleEveryOther xs = stitch ((takeNth 2 0) xs) (map (* 2) $ (takeNth 2 1) xs)
+doubleEveryOther xs = stitch ((takeNth2 2 0) xs) (map (* 2) $ (takeNth2 2 1) xs)
 
 -- Ex 3
 sumDigits :: [Integer] -> Integer

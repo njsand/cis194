@@ -3,21 +3,14 @@
 module Golf where
 
 import Control.Applicative
-
 import ListHelper
 
 -- Ex 1
 skips :: [a] -> [[a]]
-skips xs = getZipList $ liftA2 takeNth (ZipList [1..]) (ZipList $ replicate (length xs) xs)
+skips xs = map ((flip takeNth) xs) [1..length xs]
 
 -- Ex 2
-
 localMaxima :: [Integer] -> [Integer]
-localMaxima = id
-
--- Group a list into triples yeah.
-triples :: [a] -> [(a,a,a)]
-triples xs = getZipList $ liftA3 (,,)
-               (ZipList xs) (ZipList $ drop 1 xs) (ZipList $ drop 2 xs)
+localMaxima = map (\(_, x, _) -> x) . filter (\(x,y,z) -> y > x && y > z) . triples
 
 -- Ex 3

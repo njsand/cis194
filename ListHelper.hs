@@ -1,9 +1,12 @@
 module ListHelper
 ( takeNth,
   takeNth2,
-  stitch
+  stitch,
+  triples
 )
 where  
+
+import Control.Applicative
 
 -- Take every @n@th element of a list.
 takeNth :: Int -> [a] -> [a]
@@ -21,3 +24,10 @@ takeNth2 n start = map snd . filter ((== n) . fst) .
 -- Stitch two lists together.
 -- stitch "hlo" "el" == "hello"
 stitch x y = concat (zipWith (\a b -> [a, b]) x y)
+
+-- Group a list into triples yeah.
+-- Eg.:
+-- triples [1,2,3,4] == [(1,2,3), (2,3,4)]
+triples :: [a] -> [(a,a,a)]
+triples xs = getZipList $ liftA3 (,,)
+               (ZipList xs) (ZipList $ drop 1 xs) (ZipList $ drop 2 xs)

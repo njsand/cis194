@@ -3,7 +3,6 @@
 module Golf where
 
 import Control.Applicative
-
 import ListHelper
 
 -- Ex 1

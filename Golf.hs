@@ -2,7 +2,7 @@
 
 module Golf where
 
-import Control.Applicative
+-- import Control.Applicative
 import ListHelper
 import Data.List
 
@@ -15,12 +15,12 @@ localMaxima :: [Integer] -> [Integer]
 localMaxima = map (\(_, x, _) -> x) . filter (\(x,y,z) -> y > x && y > z) . triples
 
 -- Ex 3
+-- Draw a frequency histogram of a list of numbers that all lie in the range [0..9].
 histogram :: [Integer] -> String
-histogram xs = let counts = map (\x -> length $ filter (== x) xs) [0..9]
-                   most = foldl1 max counts
-                   lines = map (\x -> map (display . (>= x)) counts) [most, most - 1 .. 0]
-               in concat . (intersperse "\n") $ lines ++ 
-                  [replicate 10 '='] ++ [concatMap show [0..9]] ++ [[]]
+histogram xs = let counts = map (length . (flip filter $ xs) . (==)) [0..9]
+                   height = foldl1 max counts
+                   lines = map (\x -> map (display . (>= x)) counts) [height, height - 1 .. 1]
+               in unlines $ lines ++ [replicate 10 '='] ++ [concatMap show [0..9]]
 
 display :: Bool -> Char
 display True = '*'

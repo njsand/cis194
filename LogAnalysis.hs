@@ -32,8 +32,6 @@ insert logmsg@(LogMessage _ stamp _) (Node left current@(LogMessage _ stamp2 _) 
   | otherwise = error "should not happen"
 
 insert _ (Node _ (Unknown _) _) = error "what"
--- Now why do I need this?  Do not understand.
--- insert _ (Node _ (LogMessage _ _ _) _) = error "what"  
 
 -- Ex 3
 build :: [LogMessage] -> MessageTree

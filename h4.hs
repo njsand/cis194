@@ -55,3 +55,22 @@ treeDepth :: Tree a -> Integer
 treeDepth Leaf = -1             -- A sentinel value
 treeDepth (Node d _ _ _) = d
 
+
+-- ex 3
+
+-- |Returns True if and only if there are an odd number of True values contained
+-- in the input list.  (Required to use a fold here.)
+xor :: [Bool] -> Bool
+xor = foldl rec False where
+  rec True False = True
+  rec False True = True
+  rec _ _ = False
+
+-- |Implement map as a fold.
+map' :: (a -> b) -> [a] -> [b]
+map' f = foldr (\x acc -> f x:acc) []
+
+-- |Implement foldl using foldr.
+-- Serious headspins here.
+myFoldl :: (a -> b -> a) -> a -> [b] -> a
+myFoldl f base xs = foldr (\x g -> (\a -> g (f a x))) id  xs $ base

@@ -74,3 +74,19 @@ map' f = foldr (\x acc -> f x:acc) []
 -- Serious headspins here.
 myFoldl :: (a -> b -> a) -> a -> [b] -> a
 myFoldl f base xs = foldr (\x g -> (\a -> g (f a x))) id  xs $ base
+
+-- ex 4
+-- Sieve of Sundaram
+-- https://en.wikipedia.org/wiki/Sieve_of_Sundaram
+sieve :: Integer -> [Integer]
+sieve n = map (+1) . map (*2) . filter (\x -> not $ elem x gen) $ [1..n]
+  where gen = sieveList n
+
+-- |Produces numbers of the form "i + j + 2ij = x" where 1 <= i <= j and x <= N
+sieveList n = [i + j + 2 * i * j | j <- [1..maxj n], i <- [1..maxi n j]]
+
+maxj :: Integer -> Integer
+maxj n = (n - 1) `div` 3
+
+maxi :: Integer -> Integer -> Integer
+maxi n j = min j $ (n - j) `div` (2 * j + 1)

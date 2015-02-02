@@ -57,7 +57,6 @@ treeDepth (Node d _ _ _) = d
 
 
 -- ex 3
-
 -- |Returns True if and only if there are an odd number of True values contained
 -- in the input list.  (Required to use a fold here.)
 xor :: [Bool] -> Bool

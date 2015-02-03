@@ -1,20 +1,23 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 -- Week 5 solutions
 
 import Control.Applicative
 
 import ExprT
 import Parser
+import StackVM
 
 -- ex 1
 -- |Evaluates an expression.
 eval :: ExprT -> Integer
-eval (Lit x) = x
-eval (Add x y) = eval x + eval y
-eval (Mul x y) = eval x * eval y
+eval (ExprT.Lit x) = x
+eval (ExprT.Add x y) = eval x + eval y
+eval (ExprT.Mul x y) = eval x * eval y
 
 -- ex 2
 evalStr :: String -> Maybe Integer
-evalStr s = eval <$> parseExp Lit Add Mul s
+evalStr s = eval <$> parseExp Lit ExprT.Add ExprT.Mul s
 
 -- -- ex 3
 class Expr a where
@@ -24,8 +27,8 @@ class Expr a where
 
 instance Expr ExprT where
   lit x = Lit x
-  add x y = Add x y
-  mul x y = Mul x y
+  add x y = ExprT.Add x y
+  mul x y = ExprT.Mul x y
 
 -- ex 4
 instance Expr Integer where
@@ -60,3 +63,8 @@ testInteger = testExp :: Maybe Integer
 testBool = testExp :: Maybe Bool
 testMM = testExp :: Maybe MinMax
 testSat = testExp :: Maybe Mod7
+
+instance Expr Program where
+  lit x = [PushI x]
+  add x y = x ++ y ++ [StackVM.Add]
+  mul x y = x ++ y ++ [StackVM.Mul]

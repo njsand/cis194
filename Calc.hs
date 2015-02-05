@@ -1,5 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 
+module Calc where
+
 -- Week 5 solutions
 
 import Control.Applicative
@@ -64,7 +66,13 @@ testBool = testExp :: Maybe Bool
 testMM = testExp :: Maybe MinMax
 testSat = testExp :: Maybe Mod7
 
+-- ex 5
+
 instance Expr Program where
   lit x = [PushI x]
   add x y = x ++ y ++ [StackVM.Add]
   mul x y = x ++ y ++ [StackVM.Mul]
+
+-- |Compile a string into instructions that can be run on the VM in StackVM.
+compile :: String -> Maybe Program
+compile = parseExp lit add mul

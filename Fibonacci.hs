@@ -18,7 +18,7 @@ fibs2 = [0,1] ++ rec 0 1
 data Stream a = Stream a (Stream a)
 
 instance Show a => Show (Stream a) where
-  show s = show $ take 20 $ streamToList s
+  show s = show $ take 50 $ streamToList s
 
 streamToList :: Stream a -> [a]
 streamToList (Stream x rest) = x:streamToList rest
@@ -29,3 +29,23 @@ streamRepeat x = Stream x $ streamRepeat x
 
 streamMap :: (a -> b) -> Stream a -> Stream b
 streamMap f (Stream x rest) = Stream (f x) $ streamMap f rest
+
+streamFromSeed :: (a -> a) -> a -> Stream a
+streamFromSeed f x = Stream x $ streamFromSeed f (f x)
+
+-- ex 5
+-- |A stream version of [1,2..]
+nats :: Stream Integer
+nats = streamFromSeed (+1) 0
+
+-- |Alternates the elements from two streams.
+interleaveStreams :: Stream a -> Stream a -> Stream a
+interleaveStreams a b = rec a b True where
+  rec (Stream x s) s2 True = Stream x $ rec s s2 False
+  rec s1 (Stream x s) False = Stream x $ rec s1 s True
+                                        
+-- |The ruler function.
+ruler :: Stream Integer
+ruler = rec 0 where
+ rec n = interleaveStreams (streamRepeat n) (rec $ 1 + n)
+

@@ -40,9 +40,7 @@ nats = streamFromSeed (+1) 0
 
 -- |Alternates the elements from two streams.
 interleaveStreams :: Stream a -> Stream a -> Stream a
-interleaveStreams a b = rec a b True where
-  rec (Stream x s) s2 True = Stream x $ rec s s2 False
-  rec s1 (Stream x s) False = Stream x $ rec s1 s True
+interleaveStreams (Stream x s) s2 = Stream x $ interleaveStreams s2 s
                                         
 -- |The ruler function.
 ruler :: Stream Integer

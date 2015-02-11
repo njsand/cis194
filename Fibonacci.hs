@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleInstances #-}
+{-# OPTIONS_GHC -fno-warn-missing-methods #-}
 -- Hw 6
 
 -- ex 1
@@ -46,4 +48,15 @@ interleaveStreams (Stream x s) s2 = Stream x $ interleaveStreams s2 s
 ruler :: Stream Integer
 ruler = rec 0 where
  rec n = interleaveStreams (streamRepeat n) (rec $ 1 + n)
+
+-- ex 6
+x :: Stream Integer
+x = Stream 0 $ Stream 1 $ streamRepeat 0
+
+-- The -fno-warn-missing-methods above avoids warnings about missing methods in
+-- this instance.
+instance Num (Stream Integer) where
+  fromInteger n = Stream n $ streamRepeat 0
+  negate s = streamMap (0-) s
+  (+) (Stream x s1) (Stream y s2) = Stream (x + y) $ s1 + s2
 

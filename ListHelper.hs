@@ -21,9 +21,14 @@ takeNth2 :: Int -> Int -> [a] -> [a]
 takeNth2 n start = map snd . filter ((== n) . fst) . 
                   zip (replicate start 0 ++ [n] ++ cycle [1..n])
 
--- Stitch two lists together.
--- stitch "hlo" "el" == "hello"
+-- Stitch two lists together.  Only goes as far as the shortest list.
+-- stitch "hlo" "el" == "hell"
 stitch x y = concat (zipWith (\a b -> [a, b]) x y)
+
+-- A different implementation.
+stitch2 _ [] = []
+stitch2 [] _ = []
+stitch2 (x:xs) (y:ys) = x:y:stitch2 xs ys
 
 -- Group a list into triples yeah.
 -- Eg.:

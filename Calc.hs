@@ -39,9 +39,7 @@ instance Expr Integer where
   mul x y = x * y
 
 instance Expr Bool where
-  lit x
-   | x <= 0 = False
-   | x > 0 = True
+  lit = (> 0)
   add = (||)
   mul = (&&)
 

@@ -44,7 +44,7 @@ nats = streamFromSeed (+1) 0
 interleaveStreams :: Stream a -> Stream a -> Stream a
 interleaveStreams (Stream x s) s2 = Stream x $ interleaveStreams s2 s
                                         
--- |The ruler function.
+-- |The ruler function: the highest power of 2 that evenly divides [1..].
 ruler :: Stream Integer
 ruler = rec 0 where
  rec n = interleaveStreams (streamRepeat n) (rec $ 1 + n)
@@ -53,10 +53,16 @@ ruler = rec 0 where
 x :: Stream Integer
 x = Stream 0 $ Stream 1 $ streamRepeat 0
 
--- The -fno-warn-missing-methods above avoids warnings about missing methods in
--- this instance.
+-- The -fno-warn-missing-methods above avoids warnings here.
 instance Num (Stream Integer) where
   fromInteger n = Stream n $ streamRepeat 0
   negate s = streamMap (0-) s
   (+) (Stream x s1) (Stream y s2) = Stream (x + y) $ s1 + s2
+  (*) (Stream x s1) b@(Stream y s2) = Stream (x * y) $ streamMap (*x) s2 + s1 * b
 
+instance Fractional (Stream Integer) where
+  (/) a@(Stream x s1) b@(Stream y s2) = Stream (x `div` y) $ streamMap (`div` y) (s1 - (a / b) * s2)
+
+-- |Another definition of fibonacci.
+fibs3 :: Stream Integer
+fibs3 = x / (1 - x - x ^ 2)

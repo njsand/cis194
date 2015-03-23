@@ -7,6 +7,8 @@ import Sized
 import Scrabble
 import Buffer
 
+import Editor
+
 data JoinList m a = Empty
                   | Single m a
                   | Append m (JoinList m a) (JoinList m a)
@@ -32,7 +34,6 @@ indexJ i (Append m l r)
   where leftSize = getSize $ size $ tag l
 
 dropJ :: (Sized b, Monoid b) => Int -> JoinList b a -> JoinList b a
-dropJ _ Empty = Empty
 dropJ n jl | n <= 0 = jl
 dropJ n jl | n >= (getSize $ size $ tag jl) = Empty
 dropJ n jl@(Append m l r)
@@ -69,8 +70,11 @@ scoreLine :: String -> JoinList Score String
 scoreLine s = Single (scoreString s) s
 
 balanceJ :: (Sized b, Monoid b) => JoinList b a -> JoinList b a
-balanceJ t@(Append m _ _) = (balanceJ $ takeJ sz t) +++ (balanceJ $ dropJ sz t)
-  where sz = ((getSize . size) m) `div` 2
+balanceJ t@(Append m _ _)
+  | sz == 1 = t
+  | otherwise = (balanceJ $ takeJ hsz t) +++ (balanceJ $ dropJ hsz t)
+  where sz = ((getSize . size) m)
+        hsz = sz `div` 2
 balanceJ t = t
 
 drawJ :: JoinList b a -> String
@@ -83,18 +87,26 @@ drawJ jl = "digraph test {\n" ++ (fst $ rec jl 1) ++ "\n}\n" where
   rec (Single _ _) n = ("", n)
   rec Empty n = ("", n)
                
-
 instance Buffer (JoinList (Score, Size) String) where
   toString (Append _ l r) = toString l ++ toString r
   toString (Single _ a) = a
   toString Empty = ""
 
-  fromString = foldl (+++) Empty . map (\line -> Single (scoreString line, 1) line) . lines
+  fromString = balanceJ . foldl (+++) Empty . map (\line -> Single (scoreString line, 1) line) . lines
 
   line = indexJ
 
-  replaceLine i s b = Empty
+  replaceLine i s b
+    | i < 0 || i >= (getSize $ size $ tag b) = b
+    | otherwise = takeJ i b +++ (Single (scoreString s, Size 1) s) +++ dropJ (i + 1) b
 
   numLines = getSize . size . tag
 
   value = getScore . fst . tag
+
+main = runEditor editor $ (fromString $ unlines
+         [ "This buffer is for notes you don't want to save, and for"
+         , "evaluation of steam valve coefficients."
+         , "To load a different file, type the character L followed"
+         , "by the name of the file."
+         ] :: JoinList (Score, Size) String)

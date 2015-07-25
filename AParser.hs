@@ -52,6 +52,7 @@ abParser_ = (const ()) <$> abParser
 intPair :: Parser [Integer]
 intPair = (\x _ z -> [x, z]) <$> posInt <*> char ' ' <*> posInt
 
+-- ex 4
 instance Alternative Parser where
   empty = Parser (\s -> Nothing)
   (Parser x) <|> (Parser y) = Parser f where
@@ -62,7 +63,3 @@ instance Alternative Parser where
 -- ex 5
 intOrUppercase :: Parser ()
 intOrUppercase = (const () <$> posInt) <|> (const () <$> (satisfy isUpper))
-
-casetest x = case x of
-  1 -> 2
-  3 -> 4

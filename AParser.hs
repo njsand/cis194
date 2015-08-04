@@ -1,5 +1,7 @@
 -- Homework 10
 
+module AParser where
+
 import Data.Char
 import Control.Applicative
 
@@ -61,5 +63,6 @@ instance Alternative Parser where
       return (v, r)
 
 -- ex 5
+-- const 
 intOrUppercase :: Parser ()
 intOrUppercase = (const () <$> posInt) <|> (const () <$> (satisfy isUpper))

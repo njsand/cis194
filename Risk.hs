@@ -36,15 +36,19 @@ data Battlefield = Battlefield { attackers :: Army, defenders :: Army } deriving
 battle :: Battlefield -> Rand StdGen Battlefield
 battle b@(Battlefield a d) =
   do
-    let aRollCount = max 0 (a - 1)
-        bRollCount = min 2 d
-    aRolls <- fmap (reverse . sort) $ replicateM aRollCount getRandom
-    bRolls <- fmap (reverse . sort) $ replicateM bRollCount getRandom
+    let army1 = max 0 (a - 1)
+        army2 = min 2 d
+    aRolls <- sortedRolls army1
+    bRolls <- sortedRolls army2
     return $ foldl scrap b (zipWith (,) aRolls bRolls)
+
+sortedRolls :: Int -> Rand StdGen [DieValue]
+sortedRolls n = fmap (reverse . sort) $ replicateM n getRandom
 
 -- One step of a battle.
 scrap :: Battlefield -> (DieValue, DieValue) -> Battlefield
-scrap (Battlefield a d) (aRoll, dRoll)
-  | dRoll >= aRoll = Battlefield (a - 1) d
-  | otherwise = Battlefield a (d - 1)
+scrap (Battlefield a d) (attack, defense)
+  | attack > defense = Battlefield a (d - 1)
+  | otherwise = Battlefield (a - 1) d
 
+-- ex 3

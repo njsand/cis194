@@ -52,3 +52,19 @@ scrap (Battlefield a d) (attack, defense)
   | otherwise = Battlefield (a - 1) d
 
 -- ex 3
+-- Run a battle until its conclusion.
+invade :: Battlefield -> Rand StdGen Battlefield
+invade b@(Battlefield a d)
+  | a <= 1 || d == 0 = return b
+  | otherwise = do
+      result <- battle b
+      invade result
+
+-- Some test definitions
+b107 = Battlefield 10 7
+
+b22 = Battlefield 2 2
+
+b11 = Battlefield 1 1
+
+b34 = Battlefield 3 4

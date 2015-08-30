@@ -29,10 +29,7 @@ type Army = Int
 
 data Battlefield = Battlefield { attackers :: Army, defenders :: Army } deriving (Show)
 
--- battle :: Battlefield -> Rand StdGen Battlefield
-
 -- ex 2
-
 battle :: Battlefield -> Rand StdGen Battlefield
 battle b@(Battlefield a d) =
   do
@@ -43,7 +40,7 @@ battle b@(Battlefield a d) =
     return $ foldl scrap b (zipWith (,) aRolls bRolls)
 
 sortedRolls :: Int -> Rand StdGen [DieValue]
-sortedRolls n = fmap (reverse . sort) $ replicateM n getRandom
+sortedRolls n = fmap (sortBy (flip compare)) $ replicateM n getRandom
 
 -- One step of a battle.
 scrap :: Battlefield -> (DieValue, DieValue) -> Battlefield
@@ -60,11 +57,20 @@ invade b@(Battlefield a d)
       result <- battle b
       invade result
 
+-- ex 4
+-- Run invade 1000 times and return the probability that the attackers win.
+successProb :: Battlefield -> Rand StdGen Double
+successProb b@(Battlefield a d) = do 
+  battles <- replicateM 1000 (invade b)
+  return $ fromIntegral (length $ filter ((== 0) . defenders) battles) / 1000.0
+
 -- Some test definitions
-b107 = Battlefield 10 7
+-- b107 = Battlefield 10 7
+-- b22 = Battlefield 2 2
+-- b11 = Battlefield 1 1
+-- b34 = Battlefield 3 4
+-- b201 = Battlefield 20 1
+-- b205 = Battlefield 20 5
+-- b210 = Battlefield 20 10
 
-b22 = Battlefield 2 2
 
-b11 = Battlefield 1 1
-
-b34 = Battlefield 3 4
